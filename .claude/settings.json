@@ -1,0 +1,32 @@
+{
+  "projectName": "muzykant",
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell",
+            "args": ["-File", "c:\\muzykant\\.claude\\hooks\\post-edit.ps1"],
+            "async": true,
+            "statusMessage": "Formatting edited file..."
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell",
+            "args": ["-File", "c:\\muzykant\\.claude\\hooks\\pre-bash.ps1"],
+            "statusMessage": "Safety checking command..."
+          }
+        ]
+      }
+    ]
+  }
+}

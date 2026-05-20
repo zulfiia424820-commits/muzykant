@@ -1,0 +1,74 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Store {
+  id        Int     @id @default(autoincrement())
+  name      String  @unique
+  slug      String  @unique
+  description String?
+  createdAt DateTime @default(now())
+  
+  prices    Price[]
+
+  @@map("stores")
+}
+
+model Category {
+  id        Int     @id @default(autoincrement())
+  name      String  @unique
+  slug      String  @unique
+  icon      String?
+  createdAt DateTime @default(now())
+  
+  products  Product[]
+
+  @@map("categories")
+}
+
+model Product {
+  id          Int     @id @default(autoincrement())
+  name        String
+  description String?
+  categoryId  Int
+  category    Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  unit        String  // г, л, шт, кг
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  prices      Price[]
+  favorites   Favorite[]
+
+  @@unique([name, categoryId])
+  @@map("products")
+}
+
+model Price {
+  id        Int     @id @default(autoincrement())
+  productId Int
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  storeId   Int
+  store     Store   @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  price     Float
+  updatedAt DateTime @updatedAt
+  
+  @@unique([productId, storeId])
+  @@map("prices")
+}
+
+model Favorite {
+  id        Int     @id @default(autoincrement())
+  productId Int
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  
+  @@map("favorites")
+}
